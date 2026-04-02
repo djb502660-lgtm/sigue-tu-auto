@@ -23,6 +23,17 @@ class ServiceOrder extends Model
         'observations',
     ];
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'entry_date' => 'datetime',
+            'exit_date' => 'datetime',
+        ];
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class);

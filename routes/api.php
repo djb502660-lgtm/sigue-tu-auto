@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\ServiceOrderController;
 use App\Http\Controllers\Api\StatusController;
 use Illuminate\Support\Facades\Route;
@@ -10,4 +11,6 @@ Route::get('/service-orders/{serviceOrder}', [ServiceOrderController::class, 'sh
 
 Route::get('/statuses', [StatusController::class, 'index']);
 Route::post('/service-orders/{serviceOrder}/status', [StatusController::class, 'change']);
+
+Route::post('/chat', [ChatbotController::class, 'chat']);
 

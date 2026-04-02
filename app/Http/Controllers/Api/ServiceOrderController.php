@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ServiceOrder;
+use App\Models\Status;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -66,11 +67,13 @@ class ServiceOrderController extends Controller
 
         $folioNumber = 'OS-' . now()->format('Ymd-His') . '-' . str_pad((string) random_int(0, 999), 3, '0', STR_PAD_LEFT);
 
+        $defaultStatusId = $validated['status_id'] ?? Status::where('slug', 'recibido')->value('id');
+
         $order = ServiceOrder::create([
             'folio_number' => $folioNumber,
             'client_id' => $client->id,
             'vehicle_id' => $vehicle->id,
-            'status_id' => $validated['status_id'] ?? null,
+            'status_id' => $defaultStatusId,
             'entry_date' => $validated['entry_date'] ?? now(),
             'work_description' => $validated['work_description'] ?? null,
             'observations' => $validated['observations'] ?? null,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ServiceOrder;
 use App\Models\Status;
 use App\Models\StatusHistory;
+use App\Notifications\ServiceOrderStatusUpdated;
 use Illuminate\Http\Request;
 
 class StatusController extends Controller
@@ -34,6 +35,13 @@ class StatusController extends Controller
             'changed_by' => auth()->id(),
             'note' => $validated['note'] ?? null,
         ]);
+
+        $serviceOrder->load(['client', 'vehicle', 'status']);
+
+        $client = $serviceOrder->client;
+        if ($client && filled($client->email)) {
+            $client->notify(new ServiceOrderStatusUpdated($serviceOrder));
+        }
 
         return response()->json(
             $serviceOrder->load(['status', 'history.status'])
