@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Models\StatusHistory;
 use App\Notifications\ServiceOrderStatusUpdated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StatusController extends Controller
 {
@@ -23,20 +24,22 @@ class StatusController extends Controller
             'note' => ['nullable', 'string'],
         ]);
 
-        $status = Status::findOrFail($validated['status_id']);
+        $serviceOrder = DB::transaction(function () use ($validated, $serviceOrder) {
+            $status = Status::findOrFail($validated['status_id']);
 
-        $serviceOrder->update([
-            'status_id' => $status->id,
-        ]);
+            $serviceOrder->update([
+                'status_id' => $status->id,
+            ]);
 
-        StatusHistory::create([
-            'service_order_id' => $serviceOrder->id,
-            'status_id' => $status->id,
-            'changed_by' => auth()->id(),
-            'note' => $validated['note'] ?? null,
-        ]);
+            StatusHistory::create([
+                'service_order_id' => $serviceOrder->id,
+                'status_id' => $status->id,
+                'changed_by' => auth()->id(),
+                'note' => $validated['note'] ?? null,
+            ]);
 
-        $serviceOrder->load(['client', 'vehicle', 'status']);
+            return $serviceOrder->fresh(['client', 'vehicle', 'status']);
+        });
 
         $client = $serviceOrder->client;
         if ($client && filled($client->email)) {

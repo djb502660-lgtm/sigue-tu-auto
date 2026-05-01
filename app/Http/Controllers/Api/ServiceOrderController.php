@@ -8,6 +8,7 @@ use App\Models\ServiceOrder;
 use App\Models\Status;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ServiceOrderController extends Controller
@@ -41,43 +42,45 @@ class ServiceOrderController extends Controller
             'status_id' => ['nullable', Rule::exists('statuses', 'id')],
         ]);
 
-        $client = Client::firstOrCreate(
-            [
-                'phone' => $validated['client']['phone'],
-            ],
-            [
-                'name' => $validated['client']['name'],
-                'email' => $validated['client']['email'] ?? null,
-            ]
-        );
+        $order = DB::transaction(function () use ($validated) {
+            $client = Client::firstOrCreate(
+                [
+                    'phone' => $validated['client']['phone'],
+                ],
+                [
+                    'name' => $validated['client']['name'],
+                    'email' => $validated['client']['email'] ?? null,
+                ]
+            );
 
-        $vehicle = Vehicle::firstOrCreate(
-            [
-                'plate' => $validated['vehicle']['plate'],
-            ],
-            [
+            $vehicle = Vehicle::firstOrCreate(
+                [
+                    'plate' => $validated['vehicle']['plate'],
+                ],
+                [
+                    'client_id' => $client->id,
+                    'brand' => $validated['vehicle']['brand'],
+                    'model' => $validated['vehicle']['model'],
+                    'color' => $validated['vehicle']['color'] ?? null,
+                    'vin' => $validated['vehicle']['vin'] ?? null,
+                    'mileage' => $validated['vehicle']['mileage'] ?? null,
+                ]
+            );
+
+            $folioNumber = 'OS-' . now()->format('Ymd-His') . '-' . str_pad((string) random_int(0, 999), 3, '0', STR_PAD_LEFT);
+
+            $defaultStatusId = $validated['status_id'] ?? Status::where('slug', 'recibido')->value('id');
+
+            return ServiceOrder::create([
+                'folio_number' => $folioNumber,
                 'client_id' => $client->id,
-                'brand' => $validated['vehicle']['brand'],
-                'model' => $validated['vehicle']['model'],
-                'color' => $validated['vehicle']['color'] ?? null,
-                'vin' => $validated['vehicle']['vin'] ?? null,
-                'mileage' => $validated['vehicle']['mileage'] ?? null,
-            ]
-        );
-
-        $folioNumber = 'OS-' . now()->format('Ymd-His') . '-' . str_pad((string) random_int(0, 999), 3, '0', STR_PAD_LEFT);
-
-        $defaultStatusId = $validated['status_id'] ?? Status::where('slug', 'recibido')->value('id');
-
-        $order = ServiceOrder::create([
-            'folio_number' => $folioNumber,
-            'client_id' => $client->id,
-            'vehicle_id' => $vehicle->id,
-            'status_id' => $defaultStatusId,
-            'entry_date' => $validated['entry_date'] ?? now(),
-            'work_description' => $validated['work_description'] ?? null,
-            'observations' => $validated['observations'] ?? null,
-        ]);
+                'vehicle_id' => $vehicle->id,
+                'status_id' => $defaultStatusId,
+                'entry_date' => $validated['entry_date'] ?? now(),
+                'work_description' => $validated['work_description'] ?? null,
+                'observations' => $validated['observations'] ?? null,
+            ]);
+        });
 
         return response()->json(
             $order->load(['client', 'vehicle', 'status']),
