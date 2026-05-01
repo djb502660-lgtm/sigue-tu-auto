@@ -28,24 +28,36 @@
                 </div>
                 <div class="flex items-center gap-2">
                     @auth
-                        <a
-                            href="{{ route('sistema') }}"
-                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-600 transition"
-                        >
-                            Ir al sistema
-                        </a>
+                        @if (auth()->user()->isUser())
+                            <a
+                                href="{{ route('consulta') }}"
+                                class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-600 transition"
+                            >
+                                Ver mis ordenes
+                            </a>
+                        @else
+                            <a
+                                href="{{ route('sistema') }}"
+                                class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-600 transition"
+                            >
+                                Ir al sistema
+                            </a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 text-white px-4 py-2 text-sm font-semibold hover:bg-white/20 transition"
+                            >
+                                Cerrar sesion
+                            </button>
+                        </form>
                     @else
                         <a
                             href="{{ route('login') }}"
                             class="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 text-white px-4 py-2 text-sm font-semibold hover:bg-white/20 transition"
                         >
                             Iniciar sesion
-                        </a>
-                        <a
-                            href="{{ route('register') }}"
-                            class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-600 transition"
-                        >
-                            Registrarse
                         </a>
                     @endauth
                 </div>
@@ -65,12 +77,30 @@
                         </p>
                         <div class="mt-6 flex flex-wrap gap-3">
                             @auth
-                                <a
-                                    href="{{ route('sistema') }}"
-                                    class="inline-flex items-center justify-center rounded-xl bg-white text-emerald-700 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-50 transition"
-                                >
-                                    Ir al sistema
-                                </a>
+                                @if (auth()->user()->isUser())
+                                    <a
+                                        href="{{ route('consulta') }}"
+                                        class="inline-flex items-center justify-center rounded-xl bg-white text-emerald-700 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-50 transition"
+                                    >
+                                        Ver mis ordenes
+                                    </a>
+                                @else
+                                    <a
+                                        href="{{ route('sistema') }}"
+                                        class="inline-flex items-center justify-center rounded-xl bg-white text-emerald-700 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-50 transition"
+                                    >
+                                        Ir al sistema
+                                    </a>
+                                @endif
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        class="inline-flex items-center justify-center rounded-xl border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/20 transition"
+                                    >
+                                        Cerrar sesion
+                                    </button>
+                                </form>
                             @else
                                 <a
                                     href="{{ route('login') }}"

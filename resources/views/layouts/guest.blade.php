@@ -11,10 +11,31 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .auth-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .auth-visual {
+            display: none;
+        }
+
+        @media (min-width: 1024px) {
+            .auth-shell {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .auth-visual {
+                display: flex;
+            }
+        }
+    </style>
 </head>
 <body class="font-sans bg-slate-100 text-slate-800 antialiased">
-    <div class="min-h-screen grid lg:grid-cols-2">
-        <section class="hidden lg:flex bg-gradient-to-br from-emerald-600 via-emerald-700 to-slate-900 p-12 text-white">
+    <div class="auth-shell">
+        <section class="auth-visual bg-gradient-to-br from-emerald-600 via-emerald-700 to-slate-900 p-12 text-white">
             <div class="max-w-md self-center">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-3 mb-8">
                     <span class="w-10 h-10 rounded-xl bg-white/20 grid place-items-center">

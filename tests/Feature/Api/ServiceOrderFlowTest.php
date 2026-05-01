@@ -24,11 +24,11 @@ class ServiceOrderFlowTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function test_authenticated_user_can_create_service_order_with_related_models(): void
+    public function test_authenticated_maintenance_user_can_create_service_order_with_related_models(): void
     {
         $this->seed(StatusSeeder::class);
 
-        $user = User::factory()->create();
+        $user = User::factory()->maintenance()->create();
 
         $response = $this->actingAs($user)->postJson('/api/service-orders', $this->validPayload());
 
@@ -56,11 +56,11 @@ class ServiceOrderFlowTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function test_authenticated_user_can_change_status_and_create_history_record(): void
+    public function test_authenticated_maintenance_user_can_change_status_and_create_history_record(): void
     {
         $this->seed(StatusSeeder::class);
 
-        $user = User::factory()->create();
+        $user = User::factory()->maintenance()->create();
         $order = $this->createOrder();
         $targetStatus = Status::where('slug', 'en-reparacion')->firstOrFail();
 

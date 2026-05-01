@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\ServiceOrder;
 use App\Models\Status;
+use App\Models\StatusHistory;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +72,7 @@ class ServiceOrderController extends Controller
 
             $defaultStatusId = $validated['status_id'] ?? Status::where('slug', 'recibido')->value('id');
 
-            return ServiceOrder::create([
+            $order = ServiceOrder::create([
                 'folio_number' => $folioNumber,
                 'client_id' => $client->id,
                 'vehicle_id' => $vehicle->id,
@@ -80,6 +81,15 @@ class ServiceOrderController extends Controller
                 'work_description' => $validated['work_description'] ?? null,
                 'observations' => $validated['observations'] ?? null,
             ]);
+
+            StatusHistory::create([
+                'service_order_id' => $order->id,
+                'status_id' => $defaultStatusId,
+                'changed_by' => auth()->id(),
+                'note' => 'Orden creada',
+            ]);
+
+            return $order;
         });
 
         return response()->json(

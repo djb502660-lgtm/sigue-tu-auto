@@ -172,6 +172,14 @@ async function updateOrderStatus(order, event) {
     }
 }
 
+async function logout() {
+    try {
+        await window.axios.post('/logout');
+    } finally {
+        window.location.href = '/';
+    }
+}
+
 function formatDate(value) {
     if (!value) {
         return '-';
@@ -224,9 +232,18 @@ onMounted(async () => {
                         <p class="text-xs sm:text-sm text-slate-400">Consulta y gestion de ordenes de servicio</p>
                     </div>
                 </div>
-                <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm">
-                    Mecatronica Automotriz
-                </span>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-sm">
+                        Mecatronica Automotriz
+                    </span>
+                    <button
+                        type="button"
+                        class="px-3 py-1 rounded-lg text-xs font-semibold border border-white/20 bg-white/10 hover:bg-white/20 transition"
+                        @click="logout"
+                    >
+                        Cerrar sesion
+                    </button>
+                </div>
             </div>
         </header>
 

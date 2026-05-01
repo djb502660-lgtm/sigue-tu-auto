@@ -46,8 +46,7 @@
         </div>
 
         <p class="text-sm text-slate-500 mt-5 text-center">
-            No tienes cuenta?
-            <a href="{{ route('register') }}" class="font-semibold text-emerald-700 hover:text-emerald-800">Crear cuenta</a>
+            Si necesitas acceso, solicita tu cuenta al administrador.
         </p>
     </form>
 </x-guest-layout>
