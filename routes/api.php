@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\UserTrackingApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
-    Route::middleware(['auth', 'role:mantenimiento,administrador'])->group(function () {
+    Route::middleware(['auth', 'role:mantenimiento'])->group(function () {
         Route::get('/service-orders', [ServiceOrderController::class, 'index']);
         Route::post('/service-orders', [ServiceOrderController::class, 'store']);
         Route::get('/service-orders/{serviceOrder}', [ServiceOrderController::class, 'show']);

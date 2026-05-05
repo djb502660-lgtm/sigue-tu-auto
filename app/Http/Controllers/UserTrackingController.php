@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceOrder;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -28,6 +29,17 @@ class UserTrackingController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString();
+
+        AdminEventLogger::log(
+            'user_queries',
+            'web_tracking_query',
+            'Consulta de ordenes desde modulo de usuario',
+            $request->user(),
+            [
+                'term' => $term,
+                'results' => $orders->total(),
+            ]
+        );
 
         return view('user.consulta', [
             'orders' => $orders,

@@ -23,7 +23,7 @@ class RoleAccessTest extends TestCase
 
         $response = $this->actingAs($user)->get('/sistema');
 
-        $response->assertForbidden();
+        $response->assertRedirect(route('consulta'));
     }
 
     public function test_maintenance_role_can_access_operational_module(): void
@@ -44,13 +44,22 @@ class RoleAccessTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_admin_role_cannot_access_operational_module(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->get('/sistema');
+
+        $response->assertRedirect(route('admin.monitor.dashboard'));
+    }
+
     public function test_non_admin_cannot_access_user_management_module(): void
     {
         $user = User::factory()->maintenance()->create();
 
         $response = $this->actingAs($user)->get('/admin/users');
 
-        $response->assertForbidden();
+        $response->assertRedirect(route('sistema'));
     }
 
     public function test_user_role_can_only_view_own_orders_in_user_module(): void
@@ -102,6 +111,17 @@ class RoleAccessTest extends TestCase
         $response->assertOk()
             ->assertJsonFragment(['folio_number' => 'OS-OWN-002'])
             ->assertJsonMissing(['folio_number' => 'OS-OTHER-002']);
+    }
+
+    public function test_admin_role_cannot_call_operational_api_endpoints(): void
+    {
+        $this->seed(StatusSeeder::class);
+
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->getJson('/api/service-orders');
+
+        $response->assertForbidden();
     }
 
     private function createOrderForClientEmail(string $email, string $folio, string $plate): ServiceOrder

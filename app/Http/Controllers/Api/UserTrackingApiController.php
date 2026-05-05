@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServiceOrder;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -28,6 +29,17 @@ class UserTrackingApiController extends Controller
             })
             ->latest()
             ->paginate(15);
+
+        AdminEventLogger::log(
+            'user_queries',
+            'api_tracking_query',
+            'Consulta API de ordenes del usuario',
+            $request->user(),
+            [
+                'term' => $term,
+                'results' => $orders->total(),
+            ]
+        );
 
         return response()->json($orders);
     }

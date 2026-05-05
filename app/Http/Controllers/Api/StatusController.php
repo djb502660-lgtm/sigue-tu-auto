@@ -7,6 +7,7 @@ use App\Models\ServiceOrder;
 use App\Models\Status;
 use App\Models\StatusHistory;
 use App\Notifications\ServiceOrderStatusUpdated;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,6 +46,18 @@ class StatusController extends Controller
         if ($client && filled($client->email)) {
             $client->notify(new ServiceOrderStatusUpdated($serviceOrder));
         }
+
+        AdminEventLogger::log(
+            'orders',
+            'order_status_changed',
+            "Estado actualizado para {$serviceOrder->folio_number} a {$serviceOrder->status?->name}",
+            auth()->user(),
+            [
+                'order_id' => $serviceOrder->id,
+                'folio_number' => $serviceOrder->folio_number,
+                'status_id' => $serviceOrder->status_id,
+            ]
+        );
 
         return response()->json(
             $serviceOrder->load(['status', 'history.status'])

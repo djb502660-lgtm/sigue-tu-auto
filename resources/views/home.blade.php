@@ -35,6 +35,13 @@
                             >
                                 Ver mis ordenes
                             </a>
+                        @elseif (auth()->user()->isAdmin())
+                            <a
+                                href="{{ route('admin.monitor.dashboard') }}"
+                                class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-600 transition"
+                            >
+                                Monitoreo
+                            </a>
                         @else
                             <a
                                 href="{{ route('sistema') }}"
@@ -83,6 +90,13 @@
                                         class="inline-flex items-center justify-center rounded-xl bg-white text-emerald-700 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-50 transition"
                                     >
                                         Ver mis ordenes
+                                    </a>
+                                @elseif (auth()->user()->isAdmin())
+                                    <a
+                                        href="{{ route('admin.monitor.dashboard') }}"
+                                        class="inline-flex items-center justify-center rounded-xl bg-white text-emerald-700 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-50 transition"
+                                    >
+                                        Ir a monitoreo
                                     </a>
                                 @else
                                     <a

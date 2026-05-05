@@ -8,6 +8,7 @@ use App\Models\ServiceOrder;
 use App\Models\Status;
 use App\Models\StatusHistory;
 use App\Models\Vehicle;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -88,6 +89,18 @@ class ServiceOrderController extends Controller
                 'changed_by' => auth()->id(),
                 'note' => 'Orden creada',
             ]);
+
+            AdminEventLogger::log(
+                'orders',
+                'order_created',
+                "Nueva orden creada: {$order->folio_number}",
+                auth()->user(),
+                [
+                    'order_id' => $order->id,
+                    'folio_number' => $order->folio_number,
+                    'status_id' => $defaultStatusId,
+                ]
+            );
 
             return $order;
         });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -42,6 +43,17 @@ class UserManagementController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        AdminEventLogger::log(
+            'roles',
+            'user_account_created',
+            "Cuenta creada para {$validated['email']} con rol {$validated['role']}",
+            auth()->user(),
+            [
+                'target_email' => $validated['email'],
+                'role' => $validated['role'],
+            ]
+        );
+
         return redirect()->route('admin.users.index')
             ->with('status', 'Cuenta creada correctamente.');
     }
@@ -70,6 +82,18 @@ class UserManagementController extends Controller
 
         $user->save();
 
+        AdminEventLogger::log(
+            'roles',
+            'user_account_updated',
+            "Cuenta actualizada para {$user->email} con rol {$user->role}",
+            auth()->user(),
+            [
+                'target_user_id' => $user->id,
+                'target_email' => $user->email,
+                'role' => $user->role,
+            ]
+        );
+
         return redirect()->route('admin.users.index')
             ->with('status', 'Cuenta actualizada correctamente.');
     }
@@ -84,6 +108,17 @@ class UserManagementController extends Controller
         }
 
         $user->delete();
+
+        AdminEventLogger::log(
+            'roles',
+            'user_account_deleted',
+            "Cuenta eliminada para {$user->email}",
+            auth()->user(),
+            [
+                'target_user_id' => $user->id,
+                'target_email' => $user->email,
+            ]
+        );
 
         return redirect()->route('admin.users.index')
             ->with('status', 'Cuenta eliminada correctamente.');

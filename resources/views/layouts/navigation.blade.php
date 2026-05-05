@@ -15,9 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Inicio') }}
                     </x-nav-link>
-                    @if (auth()->user()->isMaintenance() || auth()->user()->isAdmin())
+                    @if (auth()->user()->isMaintenance())
                         <x-nav-link :href="route('sistema')" :active="request()->routeIs('sistema')">
                             {{ __('Sistema') }}
+                        </x-nav-link>
+                    @endif
+                    @if (auth()->user()->isAdmin())
+                        <x-nav-link :href="route('admin.monitor.dashboard')" :active="request()->routeIs('admin.monitor.*')">
+                            {{ __('Monitoreo') }}
                         </x-nav-link>
                     @endif
                     @if (auth()->user()->isUser())
@@ -85,9 +90,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Inicio') }}
             </x-responsive-nav-link>
-            @if (auth()->user()->isMaintenance() || auth()->user()->isAdmin())
+            @if (auth()->user()->isMaintenance())
                 <x-responsive-nav-link :href="route('sistema')" :active="request()->routeIs('sistema')">
                     {{ __('Sistema') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.monitor.dashboard')" :active="request()->routeIs('admin.monitor.*')">
+                    {{ __('Monitoreo') }}
                 </x-responsive-nav-link>
             @endif
             @if (auth()->user()->isUser())

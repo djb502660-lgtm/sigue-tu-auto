@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\ChatbotService;
+use App\Support\AdminEventLogger;
 use Illuminate\Http\Request;
 
 class ChatbotController extends Controller
@@ -25,6 +26,18 @@ class ChatbotController extends Controller
         $orders = $this->chatbot->findOrders($message, $phone);
         $local = $this->chatbot->buildLocalReply($orders, $message);
         $reply = $this->chatbot->maybeEnhanceWithAi($message, $orders, $local);
+
+        AdminEventLogger::log(
+            'user_queries',
+            'chat_query',
+            'Consulta por chatbot recibida',
+            auth()->user(),
+            [
+                'query' => $message,
+                'orders_found' => $orders->count(),
+                'phone_hint' => $phone,
+            ]
+        );
 
         return response()->json([
             'reply' => $reply,

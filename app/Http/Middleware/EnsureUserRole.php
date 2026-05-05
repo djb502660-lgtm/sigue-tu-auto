@@ -24,7 +24,19 @@ class EnsureUserRole
                 ], 403);
             }
 
-            abort(403);
+            if ($user?->isAdmin()) {
+                return redirect()->route('admin.monitor.dashboard');
+            }
+
+            if ($user?->isMaintenance()) {
+                return redirect()->route('sistema');
+            }
+
+            if ($user?->isUser()) {
+                return redirect()->route('consulta');
+            }
+
+            return redirect()->route('home');
         }
 
         return $next($request);

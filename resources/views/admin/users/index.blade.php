@@ -1,20 +1,13 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between gap-3">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Gestion de cuentas
-            </h2>
-            <a href="{{ route('admin.users.create') }}"
-                class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-                Nueva cuenta
-            </a>
-        </div>
-    </x-slot>
-
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-slate-200">
-                <div class="p-6 text-slate-800">
+<x-admin.monitor.layout>
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-slate-200">
+        <div class="p-6 text-slate-800">
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <h3 class="font-semibold text-slate-800">Gestion de cuentas</h3>
+                        <a href="{{ route('admin.users.create') }}"
+                            class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                            Nueva cuenta
+                        </a>
+                    </div>
                     @if (session('status'))
                         <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
                             {{ session('status') }}
@@ -74,8 +67,6 @@
                     <div class="mt-4">
                         {{ $users->links() }}
                     </div>
-                </div>
-            </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin.monitor.layout>
